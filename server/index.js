@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import User from "./models/user.js";
 import Product from "./models/product.js";
+import Order from "./models/order.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -201,6 +202,79 @@ app.get('/products/search', async (req, res) => {
 
 })
 
+// post order
+app.post('/order', async (req, res) => {
+    const { user, product, status, shippingAddress, deliveryCharges, quantity } = req.body;
+    
+    const order = new Order({
+        user,
+        product,
+        deliveryCharges,
+        shippingAddress,
+        quantity,
+        status
+    });
+   
+    try {
+        const savedOrder = await order.save();
+
+        res.json({
+            success: true,
+            data: savedOrder,
+            message: "Order created"
+        });
+    }
+
+    catch (err) {
+        console.log(err.message);
+    }
+});
+
+// get orders
+app.get('/orders', async (req, res) => {
+    const orders = await Order.find();
+
+
+    res.json({
+        success: true,
+        data: orders,
+        message: "Successfully fetched all orders"
+    });
+
+});
+
+// find by orderId
+app.get('/order/:_id', async (req, res) => {
+    const { _id } = req.params;
+    const order = await Order.findById(_id).populate("user product");
+    order.user.password = undefined;
+
+    if (order == null) {
+        return res.json({
+            success: false,
+            message: " Product not found"
+        });
+    }
+
+    res.json({
+        success: true,
+        data: order,
+        message: "Successfully found product"
+    });
+});
+
+// get orders/user/:id (by orderID)
+app.get("/orders/user/:id", async(req, res)=>{
+    const {id} = req.params;
+    const orders = await Order.find({user:id}).populate("user product");
+
+    res.json({
+        success:true,
+        data:orders,
+        message:"orders fetched successfully"
+        })
+
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on ${PORT}`)
