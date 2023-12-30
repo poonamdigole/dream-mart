@@ -71,6 +71,7 @@ app.get('/login', async (req, res) => {
     })
 });
 
+
 // post (create data)
 app.post('/product', async (req, res) => {
     const { name, description, price, brand, productImage } = req.body;

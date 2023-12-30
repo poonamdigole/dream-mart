@@ -48,10 +48,16 @@ export default function SignUp() {
 
     if (responce?.data?.success) {
         alert(responce?.data?.message)
-        window.location.href = "login";
+        window.location.href = "/login";
     } else {
         alert(responce?.data?.message)
     }
+
+    setName("");
+    setEmail("");
+    setMobile("");
+    setPassword("");
+    setAddress("");
 
 }
 
